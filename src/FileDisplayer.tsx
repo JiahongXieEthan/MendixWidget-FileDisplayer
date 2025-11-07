@@ -4,7 +4,27 @@ import "./ui/FileDisplayer.css";
 
 type FileType = "image" | "pdf" | "download";
 
-export function FileDisplayer({ file, class: className, style }: FileDisplayerContainerProps): ReactElement {
+const clampColorTemperature = (value?: number | null): number => {
+    if (typeof value !== "number" || Number.isNaN(value)) {
+        return 0;
+    }
+    return Math.min(100, Math.max(0, value));
+};
+
+const getColorTemperatureFilter = (intensity: number): string => {
+    if (intensity <= 0) {
+        return "none";
+    }
+
+    const ratio = intensity / 100;
+    const sepia = (0.75 * ratio).toFixed(2);
+    const saturate = (1 + 0.6 * ratio).toFixed(2);
+    const hueRotate = (16 * ratio).toFixed(2);
+
+    return `sepia(${sepia}) saturate(${saturate}) hue-rotate(${hueRotate}deg)`;
+};
+
+export function FileDisplayer({ file, class: className, style, colorTemperature }: FileDisplayerContainerProps): ReactElement {
     const [fileUrl, setFileUrl] = useState<string | null>(null);
     const [filename, setFilename] = useState<string>("");
     const [error, setError] = useState<string>("");
@@ -150,6 +170,9 @@ export function FileDisplayer({ file, class: className, style }: FileDisplayerCo
         setIsDragging(false);
     };
 
+    const normalizedColorTemperature = clampColorTemperature(colorTemperature);
+    const contentFilter = getColorTemperatureFilter(normalizedColorTemperature);
+
     const renderViewer = (): ReactElement => {
         if (isLoading) {
             return (
@@ -209,7 +232,10 @@ export function FileDisplayer({ file, class: className, style }: FileDisplayerCo
                         <span className="widget-file-viewer-icon">↓</span>
                     </button>
                 </div>
-                <div className="widget-file-viewer-content">
+                <div
+                    className="widget-file-viewer-content"
+                    style={contentFilter === "none" ? undefined : { filter: contentFilter }}
+                >
                     {isImage && (
                         <img
                             src={fileUrl || undefined}

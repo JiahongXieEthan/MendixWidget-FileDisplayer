@@ -12,6 +12,10 @@
                 <caption>File</caption>
                 <description>Select the file to display</description>
             </property>
+            <property key="colorTemperature" type="integer" defaultValue="0">
+                <caption>Color temperature shift</caption>
+                <description>Apply a subtle color temperature shift (0-100) to prevent competitors from copying exact color values.</description>
+            </property>
         </propertyGroup>
     </properties>
 </widget>

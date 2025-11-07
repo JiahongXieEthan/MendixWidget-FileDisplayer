@@ -12,6 +12,7 @@ export interface FileDisplayerContainerProps {
     style?: CSSProperties;
     tabIndex?: number;
     file: DynamicValue<FileValue>;
+    colorTemperature: number;
 }
 
 export interface FileDisplayerPreviewProps {
@@ -26,4 +27,5 @@ export interface FileDisplayerPreviewProps {
     renderMode: "design" | "xray" | "structure";
     translate: (text: string) => string;
     file: string;
+    colorTemperature: number | null;
 }
